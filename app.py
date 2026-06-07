@@ -199,7 +199,7 @@ if st.sidebar.button("Ejecutar Optimización", use_container_width=True):
                 x_min, f_min, iters, err_final, criterio, _, _ = resultados_comp[m]
                 tabla_resumen.append({
                     "Método": m,
-                    "Mínimo Encontrado (x*)": str(np.round(x_min, 4)),
+                    "Mínimo Encontrado (x*)": formatear_punto(x_min),
                     "Evaluación f(x*)": round(f_min, 6),
                     "Iteraciones": iters,
                     "Error Final (||Grad f||)": f"{err_final:.2e}",
@@ -273,7 +273,7 @@ if st.sidebar.button("Ejecutar Optimización", use_container_width=True):
             st.subheader(f"Análisis de Desempeño: Método de {metodo}")
             col_m1, col_m2, col_m3, col_m4 = st.columns(4)
             with col_m1:
-                st.metric(label="Mínimo Encontrado (x*)", value=str(np.round(x_min, 4)))
+                st.metric(label="Mínimo Encontrado (x*)", value=formatear_punto(x_min))
             with col_m2:
                 st.metric(label="Evaluación f(x*)", value=f"{f_min:.6f}")
             with col_m3:

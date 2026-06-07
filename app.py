@@ -13,10 +13,15 @@ st.caption("Proyecto Final — Métodos de Optimización")
 def formatear_punto(arr):
     elementos = []
     for x in arr:
-        if x == int(x):
-            s = str(int(x))
+        val_round = round(float(x), 4)
+        # Eliminar el molesto signo menos si el valor redondeado es cero (-0.0 -> 0)
+        if abs(val_round) < 1e-11:
+            val_round = 0
+            
+        if val_round == int(val_round):
+            s = str(int(val_round))
         else:
-            s = str(round(x, 4)).replace('.', ',')
+            s = str(val_round).replace('.', ',')
         elementos.append(s)
     return f"({';'.join(elementos)})"
     
@@ -122,7 +127,7 @@ def optimizar(metodo, x0, max_iter, tol, c1, c2):
         historial_error.append(error_actual)
         historial_tabla.append({
             "Iteración": k + 1, 
-            "Punto de Inspección (x)": str(np.round(x, 4)), 
+            "Punto de Inspección (x)": formatear_punto(x), 
             "f(x)": round(f(x), 6), 
             "||∇f|| (Norma Gradiente)": error_actual
         })

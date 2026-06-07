@@ -13,17 +13,12 @@ st.caption("Proyecto Final — Métodos de Optimización")
 def formatear_punto(arr):
     elementos = []
     for x in arr:
-        val_round = round(float(x), 4)
-        # Eliminar el molesto signo menos si el valor redondeado es cero (-0.0 -> 0)
-        if abs(val_round) < 1e-11:
-            val_round = 0
-            
-        if val_round == int(val_round):
-            s = str(int(val_round))
-        else:
-            s = str(val_round).replace('.', ',')
-        elementos.append(s)
-    return f"({';'.join(elementos)})"
+        val_round = float(x)
+        # Evitar el molesto signo menos en ceros debido a redondeos (-0.00 -> 0.00)
+        if abs(val_round) < 0.005:
+            val_round = 0.0
+        elementos.append(f"{val_round:.2f}")
+    return f"({', '.join(elementos)})"
     
 # --- PANEL DE ENTRADAS ORDENADO (SIDEBAR) ---
 st.sidebar.header("Configuración del Sistema")

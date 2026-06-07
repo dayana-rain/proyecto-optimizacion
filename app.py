@@ -21,15 +21,15 @@ with st.sidebar.expander("1. Variables y Función Objetivo", expanded=True):
     func_str = st.text_input("Función objetivo (ej: x1^2 + 2*x2^2", value="x1^2 + 2*x2^2")
 
 # Grupo 2: Configuración del Algoritmo
-with st.sidebar.expander("2. Algoritmo de Optimizacion", expanded=True):
+with st.sidebar.expander("2. Algoritmo de Optimización", expanded=True):
     modo_comparativo = st.checkbox("Habilitar Modo Comparativo", value=False)
     
     if not modo_comparativo:
-        metodo = st.selectbox("Metodo a ejecutar", ["Gradiente", "Gradiente Conjugado", "Newton"])
+        metodo = st.selectbox("Método a ejecutar", ["Gradiente", "Gradiente Conjugado", "Newton"])
         metodos_seleccionados = [metodo]
     else:
         # Implementacion del checklist con casillas independientes
-        st.write("Selecciona los metodos a comparar:")
+        st.write("Selecciona los métodos a comparar:")
         check_gradiente = st.checkbox("Gradiente", value=True)
         check_conjugado = st.checkbox("Gradiente Conjugado", value=True)
         check_newton = st.checkbox("Newton", value=False)
@@ -44,11 +44,11 @@ with st.sidebar.expander("2. Algoritmo de Optimizacion", expanded=True):
             metodos_seleccionados.append("Newton")
             
         if len(metodos_seleccionados) < 2:
-            st.warning("Aviso: Selecciona al menos 2 metodos para poder realizar una comparativa.")
+            st.warning("Aviso: Selecciona al menos 2 métodos para poder realizar una comparativa.")
         metodo = None
         
     start_str = st.text_input("Punto de partida (separado por comas)", value=", ".join(["1.0"] * num_vars))
-    max_iter = st.number_input("Iteraciones maximas", min_value=1, max_value=1000, value=100)
+    max_iter = st.number_input("Iteraciones máximas", min_value=1, max_value=1000, value=100)
     tol = st.number_input("Tolerancia (Epsilon)", min_value=1e-7, max_value=1e-1, value=1e-5, format="%.7f")
     
 # Grupo 3: Parámetros Avanzados de Wolfe
@@ -162,11 +162,11 @@ def optimizar(metodo, x0, max_iter, tol, c1, c2):
     return x, f(x), iteraciones, error_actual, criterio, historial_error, historial_tabla
 
 # --- RENDERIZADO VISUAL CONDICIONAL ---
-if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
+if st.sidebar.button("Ejecutar Optimización", use_container_width=True):
     
     # Validacion previa en modo comparativo
     if modo_comparativo and len(metodos_seleccionados) < 2:
-        st.error("Error: Debes seleccionar al menos 2 metodos en el panel izquierdo para ejecutar la comparacion.")
+        st.error("Error: Debes seleccionar al menos 2 métodos en el panel izquierdo para ejecutar la comparación.")
         st.stop()
 
     # -------------------------------------------------------------
@@ -178,22 +178,22 @@ if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
         for m in metodos_seleccionados:
             resultados_comp[m] = optimizar(m, x0, max_iter, tol, c1, c2)
             
-        tab1, tab2, tab3 = st.tabs(["Comparativa Global", "Analisis Simbolico", "Historiales por Metodo"])
+        tab1, tab2, tab3 = st.tabs(["Comparativa Global", "Análisis Simbólico", "Historiales por Método"])
         
         with tab1:
-            st.subheader("Analisis Comparativo de Rendimiento")
-            st.write("Resultados consolidados al evaluar la misma ecuacion matematica bajo el punto de inicio indicado:")
+            st.subheader("Análisis Comparativo de Rendimiento")
+            st.write("Resultados consolidados al evaluar la misma ecuación matemática bajo el punto de inicio indicado:")
             
             tabla_resumen = []
             for m in metodos_seleccionados:
                 x_min, f_min, iters, err_final, criterio, _, _ = resultados_comp[m]
                 tabla_resumen.append({
-                    "Metodo": m,
-                    "Minimo Encontrado (x*)": str(np.round(x_min, 4)),
-                    "Evaluacion f(x*)": round(f_min, 6),
+                    "Método": m,
+                    "Mínimo Encontrado (x*)": str(np.round(x_min, 4)),
+                    "Evaluación f(x*)": round(f_min, 6),
                     "Iteraciones": iters,
                     "Error Final (||Grad f||)": f"{err_final:.2e}",
-                    "Resultado": "Convergencia" if "Convergencia" in criterio else "Limite Alcanzado"
+                    "Resultado": "Convergencia" if "Convergencia" in criterio else "Límite Alcanzado"
                 })
             st.dataframe(tabla_resumen, use_container_width=True, hide_index=True)
             st.markdown("---")
@@ -235,18 +235,18 @@ if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
                 st.pyplot(fig)
                 
         with tab2:
-            st.subheader("Modelamiento Analitico Desarrollado por SymPy")
+            st.subheader("Modelamiento Analítico")
             col_sym1, col_sym2 = st.columns(2)
             with col_sym1:
-                st.markdown("#### Vector Gradiente Analitico (Grad f)")
+                st.markdown("#### Vector Gradiente Analítico (Grad f)")
                 st.latex(sp.latex(grad_expr))
             with col_sym2:
-                st.markdown("#### Matriz Hessiana Simbolica (H)")
+                st.markdown("#### Matriz Hessiana Simbólica (H)")
                 st.latex(sp.latex(sp.Matrix(hessian_expr)))
                 
         with tab3:
-            st.subheader("Bitacoras de Iteracion Individuales")
-            st.write("Expande el metodo que desees para revisar su historial de saltos numercos:")
+            st.subheader("Bitácoras de Iteración Individuales")
+            st.write("Expande el método que desees para revisar su historial de saltos numéricos:")
             for m in metodos_seleccionados:
                 with st.expander(f"Ver tabla detallada de: {m}"):
                     st.dataframe(resultados_comp[m][6], use_container_width=True)
@@ -257,21 +257,21 @@ if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
     else:
         x_min, f_min, iters, err_final, criterio, errores, tabla_pasos = optimizar(metodo, x0, max_iter, tol, c1, c2)
         
-        tab1, tab2, tab3 = st.tabs(["Resumen y Convergencia", "Analisis Simbolico", "Historial Paso a Paso"])
+        tab1, tab2, tab3 = st.tabs(["Resumen y Convergencia", "Análisis Simbólico", "Historial Paso a Paso"])
         
         with tab1:
-            st.subheader(f"Análisis de Desempeño: Metodo de {metodo}")
+            st.subheader(f"Análisis de Desempeño: Método de {metodo}")
             col_m1, col_m2, col_m3, col_m4 = st.columns(4)
             with col_m1:
-                st.metric(label="Minimo Encontrado (x*)", value=str(np.round(x_min, 4)))
+                st.metric(label="Mínimo Encontrado (x*)", value=str(np.round(x_min, 4)))
             with col_m2:
-                st.metric(label="Evaluacion f(x*)", value=f"{f_min:.6f}")
+                st.metric(label="Evaluación f(x*)", value=f"{f_min:.6f}")
             with col_m3:
                 st.metric(label="Iteraciones Totales", value=iters)
             with col_m4:
                 st.metric(label="Error Final (||Grad f||)", value=f"{err_final:.2e}")
                 
-            st.info(f"Condicion de Finalizacion: {criterio}")
+            st.info(f"Condición de Finalización: {criterio}")
             st.markdown("---")
             
             fig, ax = plt.subplots(figsize=(7, 3.8))
@@ -292,7 +292,7 @@ if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
             
             ax.set_xlabel("Iteraciones Realizadas", fontsize=10, fontweight='bold', color='#2E111D', labelpad=6)
             ax.set_ylabel("Magnitud del Error (Escala Log)", fontsize=10, fontweight='bold', color='#2E111D', labelpad=6)
-            ax.set_title("Trayectoria de Descenso hacia el Optimo", fontsize=11, fontweight='bold', color='#2E111D', pad=12)
+            ax.set_title("Trayectoria de Descenso hacia el Óptimo", fontsize=11, fontweight='bold', color='#2E111D', pad=12)
             ax.legend(frameon=False, loc='upper right', fontsize=9, labelcolor='#2E111D')
             
             fig.tight_layout()
@@ -301,18 +301,18 @@ if st.sidebar.button("Ejecutar Optimizacion", use_container_width=True):
                 st.pyplot(fig)
 
         with tab2:
-            st.subheader("Modelamiento Analitico Desarrollado por SymPy")
+            st.subheader("Modelamiento Analítico")
             col_sym1, col_sym2 = st.columns(2)
             with col_sym1:
-                st.markdown("#### Vector Gradiente Analitico (Grad f)")
+                st.markdown("#### Vector Gradiente Analítico (Grad f)")
                 st.latex(sp.latex(grad_expr))
             with col_sym2:
-                st.markdown("#### Matriz Hessiana Simbolica (H)")
+                st.markdown("#### Matriz Hessiana Simbólica (H)")
                 st.latex(sp.latex(sp.Matrix(hessian_expr)))
 
         with tab3:
-            st.subheader("Bitacora Detallada de Optimizacion Numerica")
+            st.subheader("Bitácora Detallada de Optimización Numérica")
             st.dataframe(tabla_pasos, use_container_width=True)
 
 else:
-    st.info("Modifica las variables en el panel izquierdo y haz clic en 'Ejecutar Optimizacion'.")
+    st.info("Modifica las variables en el panel izquierdo y haz clic en 'Ejecutar Optimización'.")

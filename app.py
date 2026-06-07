@@ -10,6 +10,16 @@ st.set_page_config(page_title="OptiWeb - Métodos de Optimización", layout="wid
 st.title("Aplicación Web de Optimización Numérica")
 st.caption("Proyecto Final — Métodos de Optimización")
 
+def formatear_punto(arr):
+    elementos = []
+    for x in arr:
+        if x == int(x):
+            s = str(int(x))
+        else:
+            s = str(round(x, 4)).replace('.', ',')
+        elementos.append(s)
+    return f"({';'.join(elementos)})"
+    
 # --- PANEL DE ENTRADAS ORDENADO (SIDEBAR) ---
 st.sidebar.header("Configuración del Sistema")
 
